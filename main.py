@@ -34,15 +34,32 @@ class Jogos:
       return f"Anos com mais lançamentos: {', '.join(anos_com_mais_lancamentos)}"
     if len(anos_com_mais_lancamentos) == 1:
       return f"Ano com mais lançamentos: {anos_com_mais_lancamentos[0]}"
-    
+
+  
+  def calcular_gratuitos_pagos(self):
+    gratuitos = 0
+    pagos = 0
+    for jogo in self.jogos:
+      preco_jogo = jogo[6]
+      if preco_jogo == "0":
+        gratuitos += 1
+      if preco_jogo != "0":
+        pagos += 1
+    return f"Percentual de jogos gratuitos: {gratuitos/(gratuitos+pagos)*100}%" + f" e percentual de jogos pagos: {pagos/(gratuitos+pagos)*100}%"
+
   def exibir_resultados_ano(self):
     ano_com_mais_lancamentos = self.calcular_ano_mais_lancamentos()
     print(ano_com_mais_lancamentos)
     return ano_com_mais_lancamentos
+    
+  def exibir_resultados_gratuitos_pagos(self):
+    gratuitos_pagos = self.calcular_gratuitos_pagos()
+    print(gratuitos_pagos)
 
 
 if __name__ == "__main__":
   visao = Jogos("games_amostra.csv")
   visao.Abrir_Arquivo()
   visao.exibir_resultados_ano()
+  visao.exibir_resultados_gratuitos_pagos()
 
