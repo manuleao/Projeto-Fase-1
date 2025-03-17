@@ -10,7 +10,7 @@ class Jogos:
           if primeira:
            primeira = False
            continue
-          self.jogos.append(linha.strip().split(';'))
+          self.jogos.append(linha.strip().split(','))
     except FileNotFoundError:
       print(f"Erro: O arquivo '{self.arquivo}' não foi encontrado.")
     except Exception as e:
@@ -23,7 +23,7 @@ class Jogos:
       lista_repeticao = []
       lista_ano_repeticao = []
       for jogo in self.jogos:
-        ano_jogo = jogo[2][:4]
+        ano_jogo = jogo[3][-5:-1]
         lista_repeticao.append(ano_jogo) 
         if ano_jogo not in lista_ano:
           lista_ano.append(ano_jogo)
@@ -43,12 +43,17 @@ class Jogos:
       gratuitos = 0
       pagos = 0
       for jogo in self.jogos:
-        preco_jogo = jogo[6]
-        if preco_jogo == "0":
-         gratuitos += 1
-        if preco_jogo != "0":
-          pagos += 1
-      return f"Percentual de jogos gratuitos: {gratuitos/(gratuitos+pagos)*100}%" + f" e percentual de jogos pagos: {pagos/(gratuitos+pagos)*100}%"
+        try:
+          preco_jogo = float(jogo[7])
+          if preco_jogo == 0:
+            gratuitos += 1
+          if preco_jogo > 0:
+            pagos += 1
+        except (ValueError, IndexError):
+          continue
+      total_gratuitos = gratuitos/(gratuitos+pagos)*100
+      total_pagos = pagos/(gratuitos+pagos)*100
+      return f"O percentual de jogos gratuitos é de {total_gratuitos:.2f}%" + f" e o percentual de jogos pagos: {total_pagos:.2f}%"
     except Exception:
      return "Erro ao calcular percentual de jogos gratuitos/pagos."
 
@@ -57,10 +62,10 @@ class Jogos:
       jogos_baratos_bem_avaliados = 0
       for jogo in self.jogos:
         try:
-          av_positivas_jogo = int(jogo[22])
-          av_negativas_jogo = int(jogo[23])
+          av_positivas_jogo = jogo[23]
+          av_negativas_jogo = jogo[24]
       
-          if int(jogo[6]) < 1000 and av_positivas_jogo > av_negativas_jogo:
+          if float(jogo[7]) < 10 and av_positivas_jogo > av_negativas_jogo:
             jogos_baratos_bem_avaliados += 1
       
         except (ValueError, IndexError):
@@ -92,7 +97,7 @@ class Jogos:
     self.exibir_jogos_baratos_bem_avaliados()
     
 if __name__ == "__main__":
-  visao = Jogos("games_amostra.csv")
+  visao = Jogos("amostra_dados_games.csv")
   visao.Abrir_Arquivo()
   visao.exibir_resultados()
 
